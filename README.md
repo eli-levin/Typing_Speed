@@ -2,7 +2,7 @@
 
 ## Description
 
-Currently, typing_speed.c compiles into a command line game that counts how many characters you can type in 10 seconds. Next update will include a variable time limit.
+Currently, typing_speed.c compiles into a command line game that counts how many characters you can type in a minute or less! Works on linux.
 
 ## How to use
 
