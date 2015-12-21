@@ -38,6 +38,9 @@ void AlarmSignalHandler(int sig){
 }
 
 void* get_input(){
+
+	printf("|-------------------START TYPING!-------------------|\n");
+
 	//change terminal input to raw so every character is counted as carriage return
 	system ("/bin/stty raw");
 	//this should be undone in signal handler
