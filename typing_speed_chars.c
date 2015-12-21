@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <string.h>
 #include <pthread.h>
 
 int char_count;
 struct sigaction act;
 pthread_t thread1;
+int TIME_LIMIT;
 
 void AlarmSignalHandler(int sig){
 
@@ -16,14 +18,15 @@ void AlarmSignalHandler(int sig){
 	system ("/bin/stty cooked");
 
 	//stop counting chars
+	float per = (float)TIME_LIMIT;
 
-	float rate = (char_count/10.0f);
+	float rate = (char_count/per);
 
 	char* good = "wonderful";
 	char* bad = "shitty";
 	char* mystr;
 
-	mystr = ((char_count < 50) ? bad : good);
+	mystr = ((rate < 10) ? bad : good); //bad tpying is < 10 chars per second :)
 
 	printf("\n\nYou are extremely %s at typing!\n", mystr);
 	printf("|----> Score : %.3f chars per second (%d Total chars).\n\n", rate, char_count);
@@ -39,7 +42,7 @@ void AlarmSignalHandler(int sig){
 
 void* get_input(){
 
-	printf("|-------------------START TYPING!-------------------|\n");
+	printf("\n|-------------------START TYPING!-------------------|\n");
 
 	//change terminal input to raw so every character is counted as carriage return
 	system ("/bin/stty raw");
@@ -54,6 +57,23 @@ void* get_input(){
 }
 
 int main(int argc, char*argv[]){
+
+	if(argc > 2){
+		printf("Incorrect number of arguments:\n");
+		exit(1);
+	}
+	if(argc < 2){
+		TIME_LIMIT = 5;
+	}
+	else{
+		TIME_LIMIT = atoi(argv[1]);
+		if ( (TIME_LIMIT > 60) || (TIME_LIMIT < 1) )
+		{
+			printf("Usage: time limit must be between 1 and 60 inclusively.\n");
+			exit(1);
+		}
+	}
+
 	char_count = 0;
 	//install signal handler for SIGALRM
 	act.sa_handler = AlarmSignalHandler;
@@ -64,9 +84,19 @@ int main(int argc, char*argv[]){
 		return -1;
 	}
 
+	printf("\nYou have %d seconds starting in ", TIME_LIMIT);
+	int i;
+	for (i = 3; i > 0; i--)
+	{
+		printf("%d... ", i);
+		fflush(stdout);
+		sleep(1);
+	}
+
+
 	pthread_create(&thread1,NULL,&get_input,NULL);
 
-	alarm(5);
+	alarm(TIME_LIMIT);
 	while(1);
 
 	return 0;
