@@ -23,7 +23,7 @@ void AlarmSignalHandler(int sig){
 	float rate = (char_count/per);
 
 	char* good = "wonderful";
-	char* bad = "shitty";
+	char* bad = "bad";
 	char* mystr;
 
 	mystr = ((rate < 10) ? bad : good); //bad tpying is < 10 chars per second :)
